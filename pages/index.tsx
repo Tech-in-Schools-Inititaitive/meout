@@ -133,7 +133,8 @@ const Home: NextPage = () => {
     .filter(Boolean)
     .join(' ')
 
-  let prompt = `Give a list of popular (just their name) that should ${placeString} near ${fullLocationString}.`
+  let prompt = `Give at most 9 popular places (just their name)`
+  prompt += ` that should ${placeString} be near ${fullLocationString}.`
   prompt += ` The places should be a prefect setting during the ${timeOption?.label}.`
   prompt += ` The places should also be great for ${groupOption?.prompt}.`
   prompt += ` Return the list of seperated by just a comma.`
@@ -174,7 +175,7 @@ const Home: NextPage = () => {
         chunkValue.split(',').forEach((place) => {
           const cleanPlace = place.trim()
           if (cleanPlace.length !== 0) {
-            prev.add(place)
+            prev.add(cleanPlace)
           }
         })
         return prev

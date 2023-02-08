@@ -120,6 +120,7 @@ const PlaceCard = ({
               quality={100}
               className="pointer-events-none"
               onError={(e) => {
+                e.currentTarget.srcset = '/no-image.png'
                 e.currentTarget.src = '/no-image.png'
               }}
             />

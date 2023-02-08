@@ -40,6 +40,7 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
           const data = event.data
           // https://beta.openai.com/docs/api-reference/completions/create#completions/create-stream
           if (data === '[DONE]') {
+            // because of no ending comma, we need to manually enqueue the last text
             const queue = encoder.encode(prevText)
             controller.enqueue(queue)
             controller.close()

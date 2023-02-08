@@ -24,4 +24,4 @@ npm run dev
 
 Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/keisto/meout&env=OPENAI_API_KEY&GOOGLEMAPS_API_KEY&project-name=meout-meal-outing-generator&repo-name=meout)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/keisto/meout&env=OPENAI_API_KEY,GOOGLEMAPS_API_KEY&project-name=meout-meal-outing-generator&repo-name=meout)

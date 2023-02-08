@@ -34,9 +34,9 @@ class MyDocument extends Document {
             property="og:description"
             content="Find your next outing in seconds."
           />
-          <meta property="og:title" content="Meout - Meal Finder" />
+          <meta property="og:title" content="Meout - Meal Outing Finder" />
           <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content="Meout - Meal Finder" />
+          <meta name="twitter:title" content="Meout - Meal Outing Finder" />
           <meta
             name="twitter:description"
             content="Find your next outing in seconds."

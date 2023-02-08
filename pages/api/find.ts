@@ -45,18 +45,24 @@ const findPlaceFromText = async (input: string, coordinates?: string) => {
     params.set('locationbias', `circle:50000@${coordinates}`)
   }
 
-  const response = await fetch(
-    `${baseUrl}findplacefromtext/json?${params.toString()}`
-  )
+  try {
+    const response = await fetch(
+      `${baseUrl}findplacefromtext/json?${params.toString()}`
+    )
 
-  const data = await response.json()
+    const data = await response.json()
 
-  if (!data?.candidates?.length) {
-    console.info('No place found', data)
-    return undefined
+    if (!data?.candidates?.length) {
+      console.info('No place found', data)
+      return undefined
+    }
+
+    return data.candidates[0] ?? undefined
+  } catch (e) {
+    console.error(e)
   }
 
-  return data.candidates[0] ?? undefined
+  return undefined
 }
 
 const getPhotoSrc = (photoReference: string) => {
