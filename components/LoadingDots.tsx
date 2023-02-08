@@ -1,23 +1,23 @@
-import styles from "../styles/loading-dots.module.css";
+import { classNames } from '../utils'
 
-const LoadingDots = ({
-  color = "#000",
-  style = "small",
-}: {
-  color: string;
-  style: string;
-}) => {
+const LoadingDots = () => {
   return (
-    <span className={style == "small" ? styles.loading2 : styles.loading}>
-      <span style={{ backgroundColor: color }} />
-      <span style={{ backgroundColor: color }} />
-      <span style={{ backgroundColor: color }} />
+    <span className="flex items-center justify-center space-x-1">
+      {[...Array(3)].map((_, i) => (
+        <span
+          key={i}
+          style={{
+            animationDelay: `${i * 250}ms`,
+            animationDuration: '1000ms',
+          }}
+          className={classNames(
+            'animate-pulse h-2 w-2 rounded-full block',
+            Math.random() < 0.15 ? 'bg-red animate-bounce' : 'bg-accent-6'
+          )}
+        />
+      ))}
     </span>
-  );
-};
+  )
+}
 
-export default LoadingDots;
-
-LoadingDots.defaultProps = {
-  style: "small",
-};
+export default LoadingDots
