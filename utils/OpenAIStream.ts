@@ -20,8 +20,6 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
-  let counter = 0
-
   const res = await fetch('https://api.openai.com/v1/completions', {
     headers: {
       'Content-Type': 'application/json',
@@ -31,7 +29,6 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
     body: JSON.stringify(payload),
   })
 
-  let prevText = ''
   const stream = new ReadableStream({
     async start(controller) {
       // callback
@@ -40,26 +37,19 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
           const data = event.data
           // https://beta.openai.com/docs/api-reference/completions/create#completions/create-stream
           if (data === '[DONE]') {
-            // because of no ending comma, we need to manually enqueue the last text
-            const queue = encoder.encode(prevText)
-            controller.enqueue(queue)
             controller.close()
             return
           }
           try {
             const json = JSON.parse(data)
             const text = json.choices[0].text
-            if (counter < 2 && (text.match(/\n/) || []).length) {
+            if ((text.match(/\n/) || []).length) {
               // this is a prefix character (i.e., "\n\n"), do nothing
               return
             }
 
-            if (text === ',') {
-              const queue = encoder.encode(prevText)
-              controller.enqueue(queue)
-            }
-            prevText += text
-            counter++
+            const queue = encoder.encode(text)
+            controller.enqueue(queue)
           } catch (e) {
             // maybe parse error
             controller.error(e)

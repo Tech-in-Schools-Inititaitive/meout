@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Toaster, resolveValue } from 'react-hot-toast'
 import Footer from '../components/Footer'
 import Github from '../components/GitHub'
@@ -96,6 +96,7 @@ const Home: NextPage = () => {
   const [allowedLocation, setAllowedLocation] = useState(true)
   const [loading, setLoading] = useState(false)
   const [generatedPlaces, setGeneratedPlaces] = useState(new Set<string>())
+  const [generatedString, setGeneratedString] = useState('')
 
   const [location, setLocation] = useState('')
   const [postalCode, setPostalCode] = useState('')
@@ -106,6 +107,24 @@ const Home: NextPage = () => {
   const [groupOption, setGroupOption] = useState<OptionType>()
   const [placeOption, setPlaceOption] = useState<OptionType>()
   const [timeOption, setTimeOption] = useState<OptionType>()
+
+  useEffect(() => {
+    setGeneratedPlaces((prev) => {
+      const places = generatedString.split(',')
+      places.forEach((place, index) => {
+        const cleanPlace = place.trim()
+        // Note: ignore last index unless it ends with a period
+        // because it's probably still typing the name of a place
+        if (
+          cleanPlace.length !== 0 &&
+          (index !== places.length - 1 || cleanPlace.endsWith('.'))
+        ) {
+          prev.add(cleanPlace)
+        }
+      })
+      return prev
+    })
+  }, [generatedString])
 
   // TODO: Bit of mess constructing prompt...
   const coordString = coordinates
@@ -133,14 +152,15 @@ const Home: NextPage = () => {
     .filter(Boolean)
     .join(' ')
 
-  let prompt = `Give at most 9 popular places (just their name)`
+  let prompt = `Give at list of popular places (just their name)`
   prompt += ` that should ${placeString} be near ${fullLocationString}.`
   prompt += ` The places should be a prefect setting during the ${timeOption?.label}.`
   prompt += ` The places should also be great for ${groupOption?.prompt}.`
-  prompt += ` Return the list of seperated by just a comma.`
+  prompt += ` Return the list of seperated by just a comma and add period at the end of the list.`
 
   const generatePlaces = async (e: any) => {
     e.preventDefault()
+    setGeneratedString('')
     setGeneratedPlaces(new Set<string>())
     setLoading(true)
     const response = await fetch('/api/generate', {
@@ -171,15 +191,7 @@ const Home: NextPage = () => {
       const { value, done: doneReading } = await reader.read()
       done = doneReading
       const chunkValue = decoder.decode(value)
-      setGeneratedPlaces((prev) => {
-        chunkValue.split(',').forEach((place) => {
-          const cleanPlace = place.trim()
-          if (cleanPlace.length !== 0) {
-            prev.add(cleanPlace)
-          }
-        })
-        return prev
-      })
+      setGeneratedString((prev) => prev + chunkValue)
     }
 
     setLoading(false)
@@ -197,6 +209,9 @@ const Home: NextPage = () => {
       }
     )
   }
+
+  console.log('generatedString', generatedString)
+  console.log('generatedPlaces', generatedPlaces)
 
   return (
     <div className="flex max-w-5xl mx-auto flex-col items-center justify-center min-h-screen">
